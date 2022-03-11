@@ -49,12 +49,19 @@ def test_config(config):
                 errors.append("Invalid Webhook URL!")
 
     if "twitter_notifier" in config:
-        try:
-            AUTH = tweepy.OAuthHandler(config.get("twitter_consumer_key"), config.get("twitter_consumer_secret"))
-            AUTH.set_access_token(config.get("twitter_access_token"), config.get("twitter_access_token_secret"))
-            API = tweepy.API(AUTH)
-            API.home_timeline()
-        except tweepy.TweepError:
-            errors.append("Invalid authentication Data!")
+         webhookurl = config["cliq_url"]
+         cliq_token = config["cliq_token"]
+
+        if not webhookurl.startswith("https://cliq.zoho.com/api/v2/bots/huntbot/incoming/") \
+           and not webhookurl.startswith("https://cliq.zoho.com/api/v2/bots"):
+            errors.append("Invalid Webhook URL!")
+        else:
+            try:
+                uri = webhookurl + "?zapikey=" + cliq_token
+                r = rq.get(webhookurl)
+                if not r.status_code == 200:
+                    errors.append("Could not verify that the Webhook is working!")
+            except rq.exceptions.RequestException as e:
+                errors.append("Invalid Webhook URL!")
 
     return errors

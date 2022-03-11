@@ -36,6 +36,23 @@ def twitter_notify(solve, consumer_key, consumer_secret, access_token, access_to
     except tweepy.TweepError as e:
         print(e)
 
+def cliq_notify(solve, webhookurl):
+    text = _getText(solve)
+
+    embed = {
+        "title": "First Blood!",
+        "color": 15158332,
+        "description": text
+    }
+
+    data = {"embeds": [embed]}
+
+    try:
+        rq.post(webhookurl, data=json.dumps(data), headers={"Content-Type": "application/json"})
+    except rq.exceptions.RequestException as e:
+        print(e)
+
+
 
 def on_solve(mapper, conn, solve):
     config = DBUtils.get_config()
@@ -45,10 +62,8 @@ def on_solve(mapper, conn, solve):
         if config.get("discord_notifier") == "true":
             discord_notify(solve, config.get("discord_webhook_url"))
 
-        if config.get("twitter_notifier") == "true":
-            twitter_notify(solve, config.get("twitter_consumer_key"), config.get("twitter_consumer_secret"),
-                           config.get("twitter_access_token"), config.get("twitter_access_token_secret"),
-                           config.get("twitter_hashtags"))
+        if config.get("cliq_notify") == "true":
+            discord_notify(solve, config.get("discord_webhook_url"))
 
 
 def _getSolves(challenge_id):

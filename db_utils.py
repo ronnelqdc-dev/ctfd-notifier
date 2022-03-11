@@ -9,12 +9,9 @@ class DBUtils:
     DEFAULT_CONFIG = [
         {"key": "discord_notifier", "value": "false"},
         {"key": "discord_webhook_url", "value": ""},
-        {"key": "twitter_notifier", "value": "false"},
-        {"key": "twitter_consumer_key", "value": ""},
-        {"key": "twitter_consumer_secret", "value": ""},
-        {"key": "twitter_access_token", "value": ""},
-        {"key": "twitter_access_token_secret", "value": ""},
-        {"key": "twitter_hashtags", "value": ""}
+        {"key": "cliq_notifier", "value": "false"},
+        {"key": "cliq_url", "value": ""},
+        {"key": "cliq_token", "value": ""}
     ]
 
     @staticmethod

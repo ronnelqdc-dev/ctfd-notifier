@@ -1,0 +1,29 @@
+<div role="tabpanel" class="tab-pane config-section" id="cliq">
+    <form method="POST" autocomplete="off" class="w-100">
+        <div class="form-group">
+            <label>
+                Enable CLIQ Notifier
+            </label>
+            <select class="form-control custom-select" name="cliq_notifier">
+                <option value="true" {% if config.get("cliq_notifier") == "true" %}selected{% endif %}>True</option>
+                <option value="false" {% if config.get("cliq_notifier") == "false" %}selected{% endif %}>False</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>
+                Cliq Url
+            </label>
+            <input type="text" class="form-control" id="cliq-url" name="cliq_url" value="{{ config.get(" cliq_url") }}">
+        </div>
+
+        <div class="form-group">
+            <label>
+                Cliq Webhook token
+            </label>
+            <input type="text" class="form-control" id="cliq-token" name="cliq_token" value="{{ config.get(" cliq_token") }}">
+        </div>
+
+        <input type="hidden" value="{{ Session.nonce }}" name="nonce" id="nonce"/>
+        <button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+    </form>
+</div>
