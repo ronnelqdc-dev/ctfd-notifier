@@ -5,7 +5,6 @@ from ...utils.modes import get_model
 import CTFd.cache as cache
 
 import json
-import tweepy
 import requests as rq
 
 
@@ -26,29 +25,18 @@ def discord_notify(solve, webhookurl):
         print(e)
 
 
-def twitter_notify(solve, consumer_key, consumer_secret, access_token, access_token_secret, hashtags):
-    text = _getText(solve, hashtags)
-    try:
-        AUTH = tweepy.OAuthHandler(consumer_key, consumer_secret)
-        AUTH.set_access_token(access_token, access_token_secret)
-        API = tweepy.API(AUTH)
-        API.update_status(status=text)
-    except tweepy.TweepError as e:
-        print(e)
-
-def cliq_notify(solve, webhookurl):
+def cliq_notify(solve, cliq_url, cliq_token):
     text = _getText(solve)
-
+    uri = cliq_url + "?zapikey=" + cliq_token
     embed = {
-        "title": "First Blood!",
-        "color": 15158332,
-        "description": text
+        "text": text["body"],
+        "solvedBy": text["user"],
+        "challenge": text["challenge"],
+        "points": text["points"]
     }
 
-    data = {"embeds": [embed]}
-
     try:
-        rq.post(webhookurl, data=json.dumps(data), headers={"Content-Type": "application/json"})
+        rq.post(uri, data=json.dumps(embed), headers={"Content-Type": "application/json"})
     except rq.exceptions.RequestException as e:
         print(e)
 
@@ -62,8 +50,8 @@ def on_solve(mapper, conn, solve):
         if config.get("discord_notifier") == "true":
             discord_notify(solve, config.get("discord_webhook_url"))
 
-        if config.get("cliq_notify") == "true":
-            discord_notify(solve, config.get("discord_webhook_url"))
+        if config.get("cliq_notifier") == "true":
+            cliq_notify(solve, config.get("cliq_url"), config.get("cliq_token"))
 
 
 def _getSolves(challenge_id):
@@ -96,6 +84,7 @@ def _getText(solve, hashtags=""):
     cache.clear_standings()
     user = _getUser(solve.user_id)
     challenge = _getChallenge(solve.challenge_id)
+    points = challenge.value
 
     score = user.get_score(admin=True)
     place = user.get_place(admin=True)
@@ -103,9 +92,14 @@ def _getText(solve, hashtags=""):
     if not hashtags == "":
         text = f"{user.name} got first blood on {challenge.name} and is now in {place} place with {score} points! {hashtags}"
     else:
-        text = f"{user.name} got first blood on {challenge.name} and is now in {place} place with {score} points!"
+        text = f"Challenge ❝{challenge.name}❞ was solved by {user.name} and is now in {place} place with {score} point(s)!"
 
-    return text
+    return {
+        "body": text,
+        "points": points,
+        "user": user.name,
+        "challenge": challenge.name
+    }
 
 
 def load_hooks():

@@ -13,14 +13,14 @@
             <label>
                 Cliq Url
             </label>
-            <input type="text" class="form-control" id="cliq-url" name="cliq_url" value="{{ config.get(" cliq_url") }}">
+            <input type="text" class="form-control" id="cliq-url" name="cliq_url" value="{{ config.get("cliq_url") }}">
         </div>
 
         <div class="form-group">
             <label>
                 Cliq Webhook token
             </label>
-            <input type="text" class="form-control" id="cliq-token" name="cliq_token" value="{{ config.get(" cliq_token") }}">
+            <input type="text" class="form-control" id="cliq-token" name="cliq_token" value="{{ config.get("cliq_token") }}">
         </div>
 
         <input type="hidden" value="{{ Session.nonce }}" name="nonce" id="nonce"/>

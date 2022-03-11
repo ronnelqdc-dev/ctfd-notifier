@@ -3,7 +3,6 @@ from .db_utils import DBUtils
 from CTFd.utils.decorators import admins_only, authed_only
 
 import requests as rq
-import tweepy
 
 notifier_bp = Blueprint("notifier", __name__, template_folder="templates")
 
@@ -48,17 +47,17 @@ def test_config(config):
             except rq.exceptions.RequestException as e:
                 errors.append("Invalid Webhook URL!")
 
-    if "twitter_notifier" in config:
+    if "cliq_notifier" in config:
          webhookurl = config["cliq_url"]
          cliq_token = config["cliq_token"]
 
-        if not webhookurl.startswith("https://cliq.zoho.com/api/v2/bots/huntbot/incoming/") \
+    if not webhookurl.startswith("https://cliq.zoho.com/api/v2/bots/huntbot/incoming/") \
            and not webhookurl.startswith("https://cliq.zoho.com/api/v2/bots"):
             errors.append("Invalid Webhook URL!")
-        else:
+    else:
             try:
                 uri = webhookurl + "?zapikey=" + cliq_token
-                r = rq.get(webhookurl)
+                r = rq.get(uri)
                 if not r.status_code == 200:
                     errors.append("Could not verify that the Webhook is working!")
             except rq.exceptions.RequestException as e:
